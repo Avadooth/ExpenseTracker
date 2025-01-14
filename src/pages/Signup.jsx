@@ -38,6 +38,8 @@ const Signup = () => {
       const data = await response.json();
 
       if (data.token) {
+        console.log("SignupToken----->>>>>>>>>>>", data.token);
+
         localStorage.setItem("token", data.token);
         navigate("/dashboard");
       } else {

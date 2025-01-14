@@ -11,7 +11,7 @@ const Dashboard = () => {
     try {
       // Retrieve the token from localStorage
       const token = localStorage.getItem("token");
-      console.log("token----->>>", token);
+      
       if (!token) {
         throw new Error("No token found. Please log in again.");
       }
@@ -36,10 +36,9 @@ const Dashboard = () => {
       // Parse and set the data
       const data = await response.json();
       setExpenses(data);
-      console.log("expenses----------->>>", expenses);
+      
     } catch (error) {
       console.error("Error fetching expenses:", error.message);
-      alert("Failed to fetch expenses. Please try again later.");
     }
   };
 

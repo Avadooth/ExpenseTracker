@@ -9,6 +9,8 @@ const Login = () => {
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
+    console.log("Login Button IS click ");
+
     e.preventDefault();
 
     const userData = {
@@ -32,11 +34,10 @@ const Login = () => {
 
       const data = await response.json(); // Parse the successful response
       localStorage.setItem("token", data.token); // Store the token securely
-
-     
+      console.log("Token:", data.token);
 
       navigate("/dashboard"); // Redirect to the dashboard
-
+      console.log("Navigating to /dashboard");
     } catch (err) {
       setError(err.message || "Something went wrong"); // Display a meaningful error
     }
@@ -85,5 +86,3 @@ const Login = () => {
 };
 
 export default Login;
-
-

@@ -3,22 +3,15 @@ import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const Navbar = ({token}) => {
-  // const [isLoggedIn, setIsLoggedIn] = useState(true);
-
-  // Check authentication status on component mount
-  // useEffect(() => {
-  //   const token = localStorage.getItem("token");
-  //   setIsLoggedIn(!!token); // Set `isLoggedIn` to true if token exists
-  //   console.log("isLoggedIn_Token------>>>>>>", token);
-  // }, []);
+const Navbar = ({ token,onLogout }) => {
   const navigate = useNavigate();
+  
 
   const handleLogout = () => {
     // Clear user authentication data
     localStorage.removeItem("token");
     toast.success("You have been logged out!");
-
+    onLogout();
     // Redirect to the login page
     navigate("/");
   };
