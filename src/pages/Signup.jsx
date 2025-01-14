@@ -1,26 +1,53 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import api from '../api';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+// import api from "../api";
 
 const Signup = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (password !== confirmPassword) {
-      setError('Passwords do not match');
+      setError("Passwords do not match");
       return;
     }
+
+    // setLoading(true); // Start loading
+    setError(""); // Clear previous errors
+
     try {
-      const response = await api.post('/signup', { email, password });
-      localStorage.setItem('token', response.data.token);
-      navigate('/dashboard');
+      const response = await fetch("http://localhost:8000/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        setError(errorData.message || "Error creating account");
+        return;
+      }
+
+      const data = await response.json();
+
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+        navigate("/dashboard");
+      } else {
+        setError("Token not received");
+      }
     } catch (err) {
-      setError('Error creating account');
+      console.error(err); // Log the error for debugging
+      setError("An unexpected error occurred. Please try again.");
+    } finally {
+      // setLoading(false); // Stop loading
     }
   };
 
@@ -59,7 +86,11 @@ const Signup = () => {
             required
           />
         </div>
-        <button type="submit" className="bg-blue-600 text-white py-2 px-4 rounded">
+        <button
+          type="submit"
+          className="bg-blue-600 text-white py-2 px-4 rounded"
+          onClick={handleSubmit}
+        >
           Sign Up
         </button>
       </form>

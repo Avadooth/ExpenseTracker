@@ -1,21 +1,44 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import api from '../api';
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import api from "../api";
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const userData = {
+      email,
+      password,
+    };
+
     try {
-      const response = await api.post('/login', { email, password });
-      localStorage.setItem('token', response.data.token);
-      navigate('/dashboard');
+      const response = await fetch("http://localhost:8000/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json", // Corrected the capitalization
+        },
+        body: JSON.stringify(userData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json(); // Parse error response if available
+        throw new Error(errorData.message || "Invalid credentials");
+      }
+
+      const data = await response.json(); // Parse the successful response
+      localStorage.setItem("token", data.token); // Store the token securely
+
+     
+
+      navigate("/dashboard"); // Redirect to the dashboard
+
     } catch (err) {
-      setError('Invalid email or password');
+      setError(err.message || "Something went wrong"); // Display a meaningful error
     }
   };
 
@@ -44,12 +67,23 @@ const Login = () => {
             required
           />
         </div>
-        <button type="submit" className="bg-blue-600 text-white py-2 px-4 rounded">
+        <button
+          type="submit"
+          className="bg-blue-600 text-white py-2 px-4 rounded"
+        >
           Login
         </button>
       </form>
+      <p className="mt-4 text-gray-700">
+        Don’t have an account?{" "}
+        <Link to="/signup" className="text-blue-600 hover:underline">
+          Sign up
+        </Link>
+      </p>
     </div>
   );
 };
 
 export default Login;
+
+
